@@ -26,7 +26,7 @@ if (isset($_GET['id']) && !empty($_GET['id'])) {
 include "../../includes/header.php";
 ?>
 <div class="main-center">
-    <h3><?php echo $welcome ?></h3> //后续添加一个css类
+    <h3><?php echo $welcome ?></h3>
     <h1 class="title">用户界面（jwt版）</h1>
     <?php echo $id_result; ?>
 </div>

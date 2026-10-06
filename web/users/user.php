@@ -9,7 +9,7 @@ include "../../includes/header.php";
 <div class="main-center">
     <h1 class="title">欢迎来到Web Security Lab，请选择项目</h1>
     <div class="menu">
-        <a class="menu-card" href="../vuln/sqli/sqli1.php"> 简易sqli注入</a>
+        <a class="menu-card" href="../vuln/sqli/sqli1.php"> sqli注入</a>
         <a class="menu-card" href="../vuln/xss/xss1.php"> 反射型xss</a>
         <a class="menu-card" href="../vuln/xss/xss2.php"> 存储型xss</a>
         <a class="menu-card" href="../vuln/xss/xss3.php"> dom型xss</a>

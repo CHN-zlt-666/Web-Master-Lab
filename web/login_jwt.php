@@ -19,13 +19,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //需要先检测是不是post传参
         //预处理语句进行防御sql注入
         if (mysqli_num_rows($result) > 0) { //检测账号是否存在
             $rows = mysqli_fetch_assoc($result);
-            $role = $rows['role'];
-            $id = $rows['id'];
-            $_SESSION['username'] = $ename;
-            $_SESSION['role'] = $role;
-            $password1 = $rows['password'];
-            //password_verify($epassword, $rows['password'])检查哈希加密之后的密码
-            if ($password1 === $epassword) { //检查密码
+            if (password_verify($epassword, $rows['password'])) {  //检查密码
+                session_regenerate_id(true);
+                $role = $rows['role'];
+                $id = $rows['id'];
+
+                $_SESSION['username'] = $ename;
+                $_SESSION['role'] = $role;
                 if ($role == 'admin') {
                     $payload = [
                         "user_name" => $ename,
@@ -35,8 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //需要先检测是不是post传参
                     //在弱密钥爆破时，设置为123456
                     $jwt = jwt_create($payload, $secret);
                     setcookie("token", $jwt);
-                    header("Location:admin/admin_jwt.php"); //存在越权漏洞，因为用户可以直接通过url的修改进入管理员界面
-                    //通过添加session，拒绝了直接访问管理员界面的操作
+                    header("Location:admin/admin_jwt.php");
                 } else {
                     $payload = [
                         "user_name" => $ename,

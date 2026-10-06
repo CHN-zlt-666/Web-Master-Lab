@@ -13,14 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (mysqli_num_rows($result) > 0) {
             $error = "用户已存在";
         } else {
-            $hash = password_hash($epassword, PASSWORD_DEFAULT);
-            $sql_insert = "INSERT INTO users (username,password) VALUES ('$ename','$hash')";
-            //对于注册，这里用到了哈希加密，更贴近于现实生活
-            if (mysqli_query($conn, $sql_insert)) {
+            $hashpassword = password_hash($epassword, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare(
+                "INSERT INTO users (username, password) VALUES (?, ?)"
+            );
+            $stmt->bind_param("ss", $ename, $hashpassword);
+
+            if ($stmt->execute()) {
                 $error = "注册成功";
             } else {
                 $error = "注册失败";
-                //echo mysqli_error($conn);
             }
         }
     } else {

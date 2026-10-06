@@ -20,7 +20,7 @@ Web-master是一个基于 php + mysql + phpstudy搭建的Windows环境下的Web�
 ## 项目特点
 
 - 从零开始搭建PHP学习平台
-- 所有漏洞均包含漏洞环境，利用过程和修复方案
+- 包含漏洞演示、学习笔记和防御思路；各模块的可运行版本与验证范围见下文
 - 不依赖于现成靶场进行Web安全学习，而是从源码出发，本质理解漏洞
 - JWT，SSRF，XXE等模块较结合实际场景进行编写
 
@@ -33,26 +33,35 @@ Web-master是一个基于 php + mysql + phpstudy搭建的Windows环境下的Web�
   │   ├── admin/                   ← 管理员页面（Session + JWT）
   │   ├── users/                   ← 用户页面（Session + JWT, 含越权）
   │   ├── css/                     ← 样式文件
-  │   ├── login.php                ← 登录入口（Session 版）
+  │   ├── index.php                ← 首页
+  │   ├── login.php                ← 认证方式选择
+  │   ├── login_session.php        ← 登录入口（Session 版）
   │   ├── login_jwt.php            ← 登录入口（JWT 版）
   │   ├── register.php             ← 注册
-  │   ├── jwt_tool.php             ← JWT 弱密钥爆破工具
-  │   └── jwt_create.php           ← JWT 生成工具
+  │   └── tool/
+  │       ├── jwt_tool.php         ← JWT 弱密钥爆破工具
+  │       └── jwt_create.php       ← JWT 生成工具
   ├── includes/
-  │   └── db.php                   ← 数据库连接
+  │   ├── db.php                   ← 数据库连接
+  │   ├── auth.php                 ← 登录状态检查
+  │   ├── jwt_function.php         ← JWT 生成与验证
+  │   ├── header.php               ← 公共导航与页头
+  │   └── footer.php               ← 公共页尾
   ├── note/                        ← 学习笔记（按模块 + 按安全机制分类）
+  ├── database.sql                 ← 本地数据库初始化数据
+  └── README.md
 ```
 
 ## 项目结构
 
-分为以下四大类:
+主要分为以下三类:
 
 1. web文件夹：
    - **vuln文件夹**：存放各类漏洞的源php代码
    - css文件夹：存放页面渲染所需要的代码
    - users和admin文件夹：users文件夹存放用户页面，admin为管理员页面。（jwt版本是用于后续的jwt学习内容）
    - 其他内容：  
-     存放登录框代码和部分工具（弱密钥爆破以及根据密钥生成jwt工具）。（登录框分为jwt版本和普通版本，网站内部并没有设置访问jwt版本的登录框，若涉及到jwt学习，可在url中输入并访问）
+     存放登录框代码和部分工具（弱密钥爆破以及根据密钥生成jwt工具）。通过login.php选择Session或JWT登录方式；工具位于web/tool目录。
 2. note文件夹：
 
    该文件夹记录了此项目以来，不同漏洞的详细原理和搭建问题以及个人心得。
@@ -61,11 +70,11 @@ Web-master是一个基于 php + mysql + phpstudy搭建的Windows环境下的Web�
    - 服务器安全机制文件夹：存放基于服务器的漏洞的详细笔记，如：原理，防御方式，心得等。（该部分是最详细的笔记）
    - php_note文件夹：存放php学习时涉及到的函数以及php中较常见的危险函数
    - defence文件：记录了该项目中所有漏洞的防御方式以及防御思想
-   - 攻击链文件：记录漏洞的完整攻击链
+   - 攻击链文件：记录攻击链思路，当前实现和验证状态见下文
 
-3. include文件夹：存放了与数据库链接的文件
+3. includes文件夹：存放数据库连接、认证函数和公共页面文件
 
-## 已完成漏洞
+## 已有学习模块
 
 - sql注入 \*\*
 - xss攻击 \*\*\*\*\*
@@ -82,40 +91,35 @@ Web-master是一个基于 php + mysql + phpstudy搭建的Windows环境下的Web�
 
 ## 模块组成
 
-每个漏洞模块均由以下部分组成：
+各模块围绕以下内容进行学习：
 
 1. 漏洞环境
 2. 漏洞利用
 3. 漏洞修复
 
-## 开发环境
+部分模块的防御仅记录在笔记或代码注释中，不能视为已运行并验证的修复版。反射型XSS模块已保留可切换的漏洞模式与HTML防御模式。
 
-- PHP
-- MySQL
-- PHPStudy
-- Apache
-- HTML
-- CSS （少量）
-- JavaScript （少量）
-- Burp Suite （少量）
-- phpMyadmin
+## 运行环境
 
-## 运行方式
+- Windows + PHPStudy + Apache
+- PHP 7.3.4（已确认本机命令行版本，站点版本以PHPStudy配置为准）
+- MySQL 5.7.26（数据库初始化文件记录的版本）
+- PHP扩展：mysqli、mysqlnd、GD、SimpleXML/libxml
+- SSRF实验需要开启 `allow_url_fopen`
+- phpMyAdmin用于数据库导入和管理
 
-1. 将该项目放入PHPStudy中的WWW目录
-2. 导入数据库
-3. 启动Apache与MySQL
-4. 由PHPStudy中打开网站
+## 搭建方式
 
-## 后续计划
-
-- 增添新的攻击链
-- 增加更多Web安全模块
-- 持续优化以及深入目前已有模块
+1. 将项目放入PHPStudy的WWW目录，站点根目录设置为项目的 `web` 目录。
+2. 配置本地域名（例如 `web-master`），启动Apache与MySQL。
+3. 在phpMyAdmin创建并选中 `websec` 数据库，导入项目根目录的 `database.sql`。
+4. 修改 `includes/db.php`，填写本机的数据库连接信息。
+5. 确保上传目录 `web/vuln/upload/uploads` 可写；XXE实验使用的日志目录也需要可写。
+6. 访问 `http://web-master/` 进入首页，通过 `login.php` 选择Session或JWT登录方式。域名和端口按实际配置替换。
 
 ## 说明
 
-该项目用于Web安全的基础学习，更适合基础较薄弱的学习者进行学习。（该项目为自己的第一个项目，项目仍在持续完善，部分板块可能存在不足，欢迎交流与提出建议。若存在部分问题或瑕疵可自行忽略。）
+该项目用于Web安全的基础学习，更适合基础较薄弱的学习者进行学习。这是作者的第一个项目，历史笔记记录了学习过程，描述与现有代码不一致时以当前实现为准。
 
 本项目并非商业系统，而是本人学习Web安全全过程中自主设计并逐步完善的学习平台，用于记录漏洞原理，漏洞利用以及漏洞修复过程
 

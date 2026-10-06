@@ -11,11 +11,12 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     if (!empty($_POST['password'])) {
         $pw = $_POST['password'];
+        $hashpw = password_hash($pw, PASSWORD_DEFAULT);
         $username = $_SESSION['username'];
         $token = $_POST['token'];
         if ($token === $_SESSION['token']) {
             $sql = $conn->prepare("UPDATE users SET password=? WHERE username=?");
-            $sql->bind_param("ss", $pw, $username);
+            $sql->bind_param("ss", $hashpw, $username);
             if ($sql->execute()) {
                 if ($sql->affected_rows > 0) {
                     $error = "修改成功";
@@ -30,13 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $error = "请输入密码";
     }
 }
-/**
- * 后续优化建议：
- * 1.对于密码尽量使用hash进行存储
- * 2.使用token机制
- * 3.对于referer以及origin的学习
- * 
- */
 ?>
 
 <?php

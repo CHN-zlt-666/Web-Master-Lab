@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') { //需要先检测是不是post传参
         //预处理语句进行防御sql注入
         if (mysqli_num_rows($result) > 0) { //检测账号是否存在
             $rows = mysqli_fetch_assoc($result);
-            $role = $rows['role'];
-            $_SESSION['username'] = $ename;
-            $_SESSION['role'] = $role;
             $password1 = $rows['password'];
-            //password_verify($epassword, $rows['password'])检查哈希加密之后的密码
-            if ($password1 == $epassword) { //检查密码
+            if (password_verify($epassword, $rows['password'])) {
+                session_regenerate_id(true);
+                $role = $rows['role'];
+                $_SESSION['username'] = $ename; //两次session赋值需放在检查密码之后，若先进行赋值，seesion已经存在，不在乎密码的正确，导致可以手动访问admin界面
+                $_SESSION['role'] = $role;
                 if ($role == 'admin') {
                     header("Location:admin/admin.php"); //存在越权漏洞，因为用户可以直接通过url的修改进入管理员界面
                     //通过添加session，拒绝了直接访问管理员界面的操作
